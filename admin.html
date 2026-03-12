@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Sudais's Store</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        .admin-sidebar {
+            width: 250px;
+            background: var(--bg-alt);
+            padding: 2rem 1rem;
+            border-right: 1px solid #eee;
+        }
+        .admin-sidebar h2 {
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-align: center;
+        }
+        .admin-menu {
+            list-style: none;
+            padding: 0;
+        }
+        .admin-menu li {
+            margin-bottom: 0.5rem;
+        }
+        .admin-menu a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+        }
+        .admin-menu a:hover, .admin-menu a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .admin-content {
+            flex: 1;
+            padding: 2rem;
+            background: var(--bg-color);
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+        }
+        .stat-card h3 {
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        /* Tables */
+        .admin-table-container {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            overflow-x: auto;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .admin-table th, .admin-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .admin-table th {
+            font-weight: 600;
+            color: var(--text-color);
+            background: #f9f9f9;
+        }
+        .admin-table tr:hover {
+            background: #fdfdfd;
+        }
+        
+        /* Modal */
+        .admin-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .admin-modal.show {
+            display: flex;
+        }
+        .admin-modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            width: 100%;
+            max-width: 500px;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: var(--radius-sm);
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <h2>⚙️ Admin</h2>
+            <ul class="admin-menu">
+                <li><a href="#" class="active" onclick="showSection('dashboard')">Dashboard</a></li>
+                <li><a href="#" onclick="showSection('products')">Manage Products</a></li>
+                <li><a href="#" onclick="showSection('categories')">Manage Categories</a></li>
+                <li><a href="#" onclick="showSection('slider')">Homepage Slider</a></li>
+                <li><a href="#" onclick="showSection('orders')">Manage Orders</a></li>
+                <li><a href="#" onclick="showSection('messages')">Messages</a></li>
+                <li><a href="#" onclick="logoutAndGoToShop(); return false;">← Back to Store</a></li>
+                <li><a href="#" onclick="logout(); return false;" style="color:var(--secondary-color); margin-top:2rem;">Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="admin-content">
+            <!-- Dashboard Section -->
+            <section id="sec-dashboard">
+                <div class="admin-header">
+                    <h1>Dashboard Overview</h1>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Products</h3>
+                        <div class="value" id="stat-products">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Orders</h3>
+                        <div class="value" id="stat-orders">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Revenue</h3>
+                        <div class="value" id="stat-revenue">Rs. 0</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Products Section -->
+            <section id="sec-products" style="display: none;">
+                <div class="admin-header">
+                    <h1>Manage Products</h1>
+                    <button class="btn btn-primary" onclick="openProductModal()">+ Add New Product</button>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price (Rs.)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-table-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Orders Section -->
+            <section id="sec-categories" style="display: none;">
+                <div class="admin-header">
+                    <h1>Manage Categories</h1>
+                    <button class="btn btn-primary" onclick="openCategoryModal()">+ Add New Category</button>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Icon</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categories-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="sec-slider" style="display: none;">
+                <div class="admin-header">
+                    <h1>Homepage Slider Images</h1>
+                    <button class="btn btn-primary" onclick="openSliderModal()">+ Add Slider Image</button>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Image Preview</th>
+                                <th>Headline</th>
+                                <th>Subtext</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="slider-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="sec-orders" style="display: none;">
+                <div class="admin-header">
+                    <h1>Customer Orders</h1>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th>Customer Name</th>
+                                <th>Total (Rs.)</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Messages Section -->
+            <section id="sec-messages" style="display: none;">
+                <div class="admin-header">
+                    <h1>Customer Messages</h1>
+                </div>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Message Preview</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messages-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div id="product-modal" class="admin-modal">
+        <div class="admin-modal-content">
+            <h2 id="modal-title">Add Product</h2>
+            <form id="product-form">
+                <input type="hidden" id="prod-id">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="prod-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="prod-category" required>
+                        <option value="electronics">Electronics</option>
+                        <option value="clothing">Clothing</option>
+                        <option value="groceries">Groceries</option>
+                        <option value="accessories">Accessories</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Price (Rs.)</label>
+                    <input type="number" id="prod-price" required>
+                </div>
+                <div class="form-group">
+                    <label>Image Upload</label>
+                    <input type="file" id="prod-image-file" accept="image/*" onchange="previewProductImage(this)">
+                    <small style="color:#666;">Or enter URL below instead</small>
+                </div>
+                <div class="form-group">
+                    <label>Image URL (or base64)</label>
+                    <input type="text" id="prod-image" placeholder="https://... or paste base64" required>
+                    <img id="prod-preview" style="max-width:100%; max-height:150px; margin-top:10px; border-radius:4px; display:none;">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeProductModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div id="order-modal" class="admin-modal">
+        <div class="admin-modal-content">
+            <h2>Order Details</h2>
+            <div id="order-details-content"></div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" onclick="closeOrderModal()">Close</button>
+                <button type="button" class="btn btn-primary" id="mark-shipped-btn">Mark as Shipped</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="category-modal" class="admin-modal">
+        <div class="admin-modal-content">
+            <h2 id="cat-modal-title">Add Category</h2>
+            <form id="category-form">
+                <input type="hidden" id="cat-id">
+                <div class="form-group">
+                    <label>Icon (Emoji)</label>
+                    <input type="text" id="cat-icon" placeholder="📱" required>
+                </div>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="cat-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="cat-desc" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeCategoryModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Slider Modal -->
+    <div id="slider-modal" class="admin-modal">
+        <div class="admin-modal-content">
+            <h2 id="slider-modal-title">Add Slider Image</h2>
+            <form id="slider-form">
+                <input type="hidden" id="slider-id">
+                <div class="form-group">
+                    <label>Image Upload</label>
+                    <input type="file" id="slider-image-file" accept="image/*" onchange="previewSliderImage(this)">
+                    <small style="color:#666;">Or enter URL below instead</small>
+                </div>
+                <div class="form-group">
+                    <label>Image URL (or base64)</label>
+                    <input type="text" id="slider-image" placeholder="https://... or paste base64" required>
+                    <img id="slider-preview" style="max-width:100%; max-height:150px; margin-top:10px; border-radius:4px; display:none;">
+                </div>
+                <div class="form-group">
+                    <label>Headline</label>
+                    <input type="text" id="slider-headline" placeholder="Welcome to our store" required>
+                </div>
+                <div class="form-group">
+                    <label>Subtext</label>
+                    <input type="text" id="slider-subtext" placeholder="Discover amazing products">
+                </div>
+                <div class="form-group">
+                    <label>Display Order</label>
+                    <input type="number" id="slider-order" min="0" value="0" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeSliderModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Slider</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>

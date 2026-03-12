@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Sudais's General Store</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <div class="logo-icon">🏪</div>
+                <div class="logo-text">Khan's <span>Store</span></div>
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="shop.html" class="nav-link">Shop</a></li>
+                <li><a href="index.html#categories" class="nav-link">Categories</a></li>
+                <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                <li><a href="login.html" class="nav-link">Admin</a></li>
+                <li>
+                    <a href="cart.html" class="nav-cart">
+                        🛒 Cart
+                        <span class="cart-count">0</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <button class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Checkout Header -->
+    <section class="checkout-header">
+        <div class="container">
+            <h1>📦 Checkout</h1>
+            <p>Complete your order</p>
+        </div>
+    </section>
+
+    <!-- Checkout Content -->
+    <section class="checkout-content">
+        <div class="container">
+            <div class="checkout-grid">
+                <div class="checkout-form">
+                    <form id="checkout-form">
+                        <!-- Customer Information -->
+                        <div class="form-section">
+                            <h3>👤 Customer Information</h3>
+                            
+                            <div class="form-group">
+                                <label for="fullName">Full Name *</label>
+                                <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone">Phone Number *</label>
+                                <input type="tel" id="phone" name="phone" placeholder="e.g., 0300-1234567" required>
+                            </div>
+                        </div>
+
+                        <!-- Delivery Address -->
+                        <div class="form-section">
+                            <h3>📍 Delivery Address</h3>
+                            
+                            <div class="form-group">
+                                <label for="address">Complete Address *</label>
+                                <textarea id="address" name="address" placeholder="House/Building number, Street, Area, City" required></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="notes">Order Notes (Optional)</label>
+                                <textarea id="notes" name="notes" placeholder="Any special instructions for delivery..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div class="form-section">
+                            <h3>💳 Payment Method</h3>
+                            
+                            <div class="payment-methods">
+                                <div class="payment-option selected" data-method="cod">
+                                    <input type="radio" name="paymentMethod" value="cod" checked>
+                                    <div class="payment-radio"></div>
+                                    <div class="payment-icon">💵</div>
+                                    <div class="payment-info">
+                                        <h4>Cash on Delivery</h4>
+                                        <p>Pay when you receive your order</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="payment-option" data-method="easypaisa">
+                                    <input type="radio" name="paymentMethod" value="easypaisa">
+                                    <div class="payment-radio"></div>
+                                    <div class="payment-icon">📱</div>
+                                    <div class="payment-info">
+                                        <h4>Easypaisa</h4>
+                                        <p>Send payment via Easypaisa</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="easypaisa-details" id="easypaisa-details">
+                                <h4>📱 Easypaisa Payment Instructions</h4>
+                                <p><strong>Account Name:</strong> Khan's General Store</p>
+                                <p><strong>Account Number:</strong> 0300-1234567</p>
+                                <br>
+                                <p>📋 <strong>Steps to pay:</strong></p>
+                                <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                    <li>Open your Easypaisa app or dial *786#</li>
+                                    <li>Select "Send Money"</li>
+                                    <li>Enter the account number: <strong>0300-1234567</strong></li>
+                                    <li>Enter the total amount shown in order summary</li>
+                                    <li>Confirm the payment</li>
+                                    <li>Take a screenshot of the confirmation</li>
+                                </ol>
+                                <br>
+                                <p style="color: #1b5e20;"><strong>⚠️ Important:</strong> After placing your order, our team will contact you to confirm the payment. Please keep your transaction ID ready.</p>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                            ✓ Place Order
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="order-summary">
+                    <h2>Order Summary</h2>
+                    
+                    <div class="order-items" id="order-items">
+                        <!-- Order items will be generated by JavaScript -->
+                    </div>
+                    
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="order-subtotal">Rs. 0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span id="order-shipping">Rs. 200</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span id="order-total">Rs. 0</span>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-light); border-radius: var(--radius-lg);">
+                        <p style="font-size: 0.875rem; color: var(--text-light); text-align: center;">
+                            🔒 Your information is secure and will only be used to process your order.
+                        </p>
+                    </div>
+                    
+                    <a href="cart.html" class="btn btn-outline" style="width: 100%; margin-top: 1rem;">
+                        ← Back to Cart
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="logo">
+                        <div class="logo-icon">🏪</div>
+                        <div class="logo-text">Khan's Store</div>
+                    </div>
+                    <p>Your trusted neighborhood store since 1995. We bring quality products right to your doorstep at the best prices.</p>
+                    <div class="footer-social">
+                        <a href="#">📘</a>
+                        <a href="#">📸</a>
+                        <a href="#">🐦</a>
+                        <a href="#">📺</a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="shop.html">Shop</a></li>
+                        <li><a href="index.html#categories">Categories</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Categories</h4>
+                    <ul>
+                        <li><a href="shop.html?category=electronics">Electronics</a></li>
+                        <li><a href="shop.html?category=clothing">Clothing</a></li>
+                        <li><a href="shop.html?category=groceries">Groceries</a></li>
+                        <li><a href="shop.html?category=accessories">Accessories</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Customer Service</h4>
+                    <ul>
+                        <li><a href="#">Shipping Info</a></li>
+                        <li><a href="#">Returns Policy</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2024 Khan's General Store. All Rights Reserved. Made with ❤️ in Pakistan</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
